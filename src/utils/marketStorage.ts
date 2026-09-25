@@ -67,7 +67,8 @@ export async function saveSharedMarketReport(report: DailyMarketReport): Promise
       saveStoredMarketReport(report);
       return;
     }
-    throw new Error('The shared market report could not be saved.');
+    const detail = await response.text();
+    throw new Error(`Shared update failed (${response.status}): ${detail || response.statusText}`);
   }
 
   saveStoredMarketReport(report);
@@ -83,7 +84,8 @@ export async function resetSharedMarketReport(): Promise<DailyMarketReport> {
   }
   if (!response.ok) {
     if (import.meta.env.DEV) return resetStoredMarketReport();
-    throw new Error('The shared market report could not be reset.');
+    const detail = await response.text();
+    throw new Error(`Shared reset failed (${response.status}): ${detail || response.statusText}`);
   }
 
   return resetStoredMarketReport();

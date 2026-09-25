@@ -175,7 +175,7 @@ export const TodayMarketModal: React.FC<TodayMarketModalProps> = ({
         setShowEditorModal(false);
       }, 1200);
     } catch (err) {
-      window.alert('Could not publish the shared market update. Please try again.');
+      window.alert(err instanceof Error ? err.message : 'Could not publish the shared market update. Please try again.');
       console.error(err);
     }
   };
@@ -188,7 +188,7 @@ export const TodayMarketModal: React.FC<TodayMarketModalProps> = ({
         setReport(def);
         setShowEditorModal(false);
       } catch (err) {
-        window.alert('Could not reset the shared market update. Please try again.');
+        window.alert(err instanceof Error ? err.message : 'Could not reset the shared market update. Please try again.');
         console.error(err);
       }
     }
