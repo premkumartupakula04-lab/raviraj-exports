@@ -5,6 +5,7 @@ import { TrustHighlights } from './components/TrustHighlights';
 import { AboutSection } from './components/AboutSection';
 import { LeadershipSection } from './components/LeadershipSection';
 import { ProductsSection } from './components/ProductsSection';
+import { VarietiesSection } from './components/VarietiesSection';
 import { QualityProcessingSection } from './components/QualityProcessingSection';
 import { CertificationsSection } from './components/CertificationsSection';
 import { AwardsSection } from './components/AwardsSection';
@@ -80,28 +81,34 @@ export default function App() {
         {/* 5. Products Section & Specifications */}
         <ProductsSection onOpenQuote={handleOpenQuote} />
 
-        {/* 6. Quality & Processing (6 Stages + Commitment) */}
+        {/* 6. Live Chilli Varieties & Rates */}
+        <VarietiesSection
+          report={marketReport}
+          onOpenMarketUpdate={handleOpenMarketUpdate}
+        />
+
+        {/* 7. Quality & Processing (6 Stages + Commitment) */}
         <QualityProcessingSection />
 
-        {/* 7. Certifications & Registrations with Big Realistic Certificate Sheets */}
+        {/* 8. Certifications & Registrations with Big Realistic Certificate Sheets */}
         <CertificationsSection />
 
-        {/* 8. Awards & Recognition */}
+        {/* 9. Awards & Recognition */}
         <AwardsSection />
 
-        {/* 9. Export Markets & Logistics Gateways */}
+        {/* 10. Export Markets & Logistics Gateways */}
         <ExportMarketsSection onOpenQuote={() => handleOpenQuote()} />
 
-        {/* 10. Company Gallery */}
+        {/* 11. Company Gallery */}
         <GallerySection />
 
-        {/* 11. Request a Quote (B2B Inquiry Form) */}
+        {/* 12. Request a Quote (B2B Inquiry Form) */}
         <InquirySection
           initialProduct={selectedProductForInquiry}
           onClearInitialProduct={() => setSelectedProductForInquiry('Red Chillies')}
         />
 
-        {/* 12. Contact Section & Verified Google Maps */}
+        {/* 13. Contact Section & Verified Google Maps */}
         <ContactSection
           onOpenMarketUpdate={handleOpenMarketUpdate}
           marketDate={marketReport.date}

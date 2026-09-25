@@ -23,6 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote, onOpenMarketUpdate 
     { name: 'Home', href: '#hero' },
     { name: 'About Us', href: '#about' },
     { name: 'Products', href: '#products' },
+    { name: 'Varieties', href: '#varieties' },
     { name: 'Quality & Processing', href: '#quality' },
     { name: 'Certifications', href: '#certifications' },
     { name: 'Awards', href: '#awards' },
