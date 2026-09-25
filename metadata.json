@@ -1,0 +1,6 @@
+{
+  "name": "Raviraj Spices Exports Pvt Ltd",
+  "description": "Raviraj Spices Exports Pvt Ltd, based in Guntur, Andhra Pradesh, supplies Indian spices and agricultural products with a focus on quality sourcing, processing and export support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
