@@ -1,6 +1,11 @@
 import { DailyMarketReport, TODAY_MARKET_UPDATE } from '../data/marketData';
 
 const STORAGE_KEY = 'raviraj_spices_live_market_data_v1';
+export const MARKET_REPORT_UPDATED_EVENT = 'raviraj-market-report-updated';
+
+export function notifyMarketReportUpdated(): void {
+  window.dispatchEvent(new Event(MARKET_REPORT_UPDATED_EVENT));
+}
 
 export function getStoredMarketReport(): DailyMarketReport {
   try {
@@ -25,12 +30,72 @@ export function saveStoredMarketReport(report: DailyMarketReport): void {
   }
 }
 
+export async function loadSharedMarketReport(): Promise<DailyMarketReport> {
+  try {
+    const response = await fetch('/api/market-report', { cache: 'no-store' });
+    if (response.ok) {
+      const report = (await response.json()) as DailyMarketReport;
+      if (report && report.varieties && report.varieties.length > 0) {
+        saveStoredMarketReport(report);
+        return report;
+      }
+    }
+  } catch (err) {
+    console.warn('Shared market report unavailable; using local report', err);
+  }
+  return getStoredMarketReport();
+}
+
+export async function saveSharedMarketReport(report: DailyMarketReport): Promise<void> {
+  let response: Response;
+  try {
+    response = await fetch('/api/market-report', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(report)
+    });
+  } catch (err) {
+    if (import.meta.env.DEV) {
+      saveStoredMarketReport(report);
+      return;
+    }
+    throw err;
+  }
+
+  if (!response.ok) {
+    if (import.meta.env.DEV) {
+      saveStoredMarketReport(report);
+      return;
+    }
+    throw new Error('The shared market report could not be saved.');
+  }
+
+  saveStoredMarketReport(report);
+}
+
+export async function resetSharedMarketReport(): Promise<DailyMarketReport> {
+  let response: Response;
+  try {
+    response = await fetch('/api/market-report', { method: 'DELETE' });
+  } catch (err) {
+    if (import.meta.env.DEV) return resetStoredMarketReport();
+    throw err;
+  }
+  if (!response.ok) {
+    if (import.meta.env.DEV) return resetStoredMarketReport();
+    throw new Error('The shared market report could not be reset.');
+  }
+
+  return resetStoredMarketReport();
+}
+
 export function resetStoredMarketReport(): DailyMarketReport {
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (err) {
     console.error('Error resetting market report', err);
   }
+  notifyMarketReportUpdated();
   return TODAY_MARKET_UPDATE;
 }
 

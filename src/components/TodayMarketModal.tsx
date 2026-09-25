@@ -22,9 +22,11 @@ import {
 import { DailyMarketReport, VarietyRate } from '../data/marketData';
 import {
   getStoredMarketReport,
-  saveStoredMarketReport,
-  resetStoredMarketReport,
-  formatMarketBulletin
+  loadSharedMarketReport,
+  resetSharedMarketReport,
+  saveSharedMarketReport,
+  formatMarketBulletin,
+  notifyMarketReportUpdated
 } from '../utils/marketStorage';
 
 interface TodayMarketModalProps {
@@ -62,8 +64,7 @@ export const TodayMarketModal: React.FC<TodayMarketModalProps> = ({
   // Reload report when modal opens
   useEffect(() => {
     if (isOpen) {
-      const stored = getStoredMarketReport();
-      setReport(stored);
+      void loadSharedMarketReport().then(setReport);
     }
   }, [isOpen]);
 
@@ -148,7 +149,7 @@ export const TodayMarketModal: React.FC<TodayMarketModalProps> = ({
   };
 
   // Save the updated market update
-  const handleSaveMarketData = (e: React.FormEvent) => {
+  const handleSaveMarketData = async (e: React.FormEvent) => {
     e.preventDefault();
     const totalArrivals = (editMainYard || 0) + (editOutsideCold || 0);
 
@@ -164,21 +165,32 @@ export const TodayMarketModal: React.FC<TodayMarketModalProps> = ({
       varieties: editVarieties
     };
 
-    saveStoredMarketReport(updatedReport);
-    setReport(updatedReport);
-    setSaveSuccessMsg(true);
-    setTimeout(() => {
-      setSaveSuccessMsg(false);
-      setShowEditorModal(false);
-    }, 1200);
+    try {
+      await saveSharedMarketReport(updatedReport);
+      notifyMarketReportUpdated();
+      setReport(updatedReport);
+      setSaveSuccessMsg(true);
+      setTimeout(() => {
+        setSaveSuccessMsg(false);
+        setShowEditorModal(false);
+      }, 1200);
+    } catch (err) {
+      window.alert('Could not publish the shared market update. Please try again.');
+      console.error(err);
+    }
   };
 
   // Reset to default data
-  const handleResetData = () => {
+  const handleResetData = async () => {
     if (window.confirm('Reset all live market rates and arrivals back to factory default?')) {
-      const def = resetStoredMarketReport();
-      setReport(def);
-      setShowEditorModal(false);
+      try {
+        const def = await resetSharedMarketReport();
+        setReport(def);
+        setShowEditorModal(false);
+      } catch (err) {
+        window.alert('Could not reset the shared market update. Please try again.');
+        console.error(err);
+      }
     }
   };
 

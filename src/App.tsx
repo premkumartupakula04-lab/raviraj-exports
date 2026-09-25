@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { TrustHighlights } from './components/TrustHighlights';
@@ -16,12 +16,33 @@ import { Footer } from './components/Footer';
 import { FloatingActions } from './components/FloatingActions';
 import { TodayMarketModal } from './components/TodayMarketModal';
 import { InquiryChannelModal } from './components/InquiryChannelModal';
+import { DailyMarketReport } from './data/marketData';
+import {
+  getStoredMarketReport,
+  loadSharedMarketReport,
+  MARKET_REPORT_UPDATED_EVENT
+} from './utils/marketStorage';
 
 export default function App() {
   const [selectedProductForInquiry, setSelectedProductForInquiry] = useState<string>('Red Chillies');
   const [isMarketModalOpen, setIsMarketModalOpen] = useState<boolean>(false);
   const [isInquiryModalOpen, setIsInquiryModalOpen] = useState<boolean>(false);
   const [inquiryModalMessage, setInquiryModalMessage] = useState<string>('');
+  const [marketReport, setMarketReport] = useState<DailyMarketReport>(getStoredMarketReport());
+
+  useEffect(() => {
+    const refreshMarketReport = () => setMarketReport(getStoredMarketReport());
+
+    void loadSharedMarketReport().then(setMarketReport);
+
+    window.addEventListener(MARKET_REPORT_UPDATED_EVENT, refreshMarketReport);
+    window.addEventListener('storage', refreshMarketReport);
+
+    return () => {
+      window.removeEventListener(MARKET_REPORT_UPDATED_EVENT, refreshMarketReport);
+      window.removeEventListener('storage', refreshMarketReport);
+    };
+  }, []);
 
   const handleOpenQuote = (productName?: string, defaultMessage?: string) => {
     const product = productName || 'Red Chillies';
@@ -81,7 +102,10 @@ export default function App() {
         />
 
         {/* 12. Contact Section & Verified Google Maps */}
-        <ContactSection onOpenMarketUpdate={handleOpenMarketUpdate} />
+        <ContactSection
+          onOpenMarketUpdate={handleOpenMarketUpdate}
+          marketDate={marketReport.date}
+        />
       </main>
 
       {/* Floating Call & WhatsApp Buttons */}

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Phone, MessageSquare, Mail, MapPin, ExternalLink, TrendingUp, Building, BarChart3 } from 'lucide-react';
 import { COMPANY_INFO } from '../data/companyData';
-import { TODAY_MARKET_UPDATE } from '../data/marketData';
 
 interface ContactSectionProps {
   onOpenMarketUpdate: () => void;
+  marketDate: string;
 }
 
-export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenMarketUpdate }) => {
+export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenMarketUpdate, marketDate }) => {
   return (
     <section id="contact" className="py-20 lg:py-28 bg-white border-t border-stone-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
@@ -98,7 +98,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenMarketUpda
                 </span>
               </div>
               <span className="text-xs font-bold text-white group-hover:text-amber-200 block">
-                Guntur Yard Rates ({TODAY_MARKET_UPDATE.date})
+                Guntur Yard Rates ({marketDate})
               </span>
             </div>
           </button>
